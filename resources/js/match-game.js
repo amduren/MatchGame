@@ -66,6 +66,10 @@ MatchGame.renderCards = function(cardValues, $game) {
     $card.data(data);
     $game.append($card);
   }
+
+  $('.card').on('click', function () {
+    MatchGame.flipCard($(this), $('#game'));
+  });
 };
 
 /*
@@ -74,5 +78,38 @@ MatchGame.renderCards = function(cardValues, $game) {
  */
 
 MatchGame.flipCard = function($card, $game) {
+  if ($card.data('isFlipped')) {
+    return;
+  }
 
+  $card.css('background-color', $card.data('color'))
+    .text($card.data('value'))
+    .data('isFlipped', true);
+
+  var flippedCards = $game.data('flippedCards');
+  flippedCards.push($card);
+
+  if (flippedCards.length === 2) {
+    var card1 = flippedCards[0];
+    var card2 = flippedCards[1];
+    if (card1.data('value') === card2.data('value')) {
+      var matchedCss = {
+        backgroundColor: 'rgb(153, 153, 153)',
+        color: 'rgb(204, 204, 204)'
+      };
+
+      card1.css(matchedCss);
+      card2.css(matchedCss);
+    } else {
+      window.setTimeout(function () {
+        card1.css('background-color', 'rgb(32, 64, 86)')
+          .text('')
+          .data('isFlipped', false);
+        card2.css('background-color', 'rgb(32, 64, 86)')
+          .text('')
+          .data('isFlipped', false);
+      }, 350);
+    }
+    $game.data('flippedCards', []);
+  }
 };
